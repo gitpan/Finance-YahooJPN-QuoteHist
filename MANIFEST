@@ -1,0 +1,6 @@
+Changes 	for the revision history
+QuoteHist.pm 	fetch histrical stock quote data of Japanese markets
+Makefile.PL	writes the Makefile
+MANIFEST	(this file)
+README  	for the short descriptions about install
+t/1.t   	test script for the Finance::YahooJPN::QuoteHist

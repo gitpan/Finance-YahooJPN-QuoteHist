@@ -1,0 +1,12 @@
+Revision history for Perl extension Finance::YahooJPN::QuoteHist.
+
+0.02  2003-08-12 22:43:34
+	- the module name has been changed and has been shortened.
+	- repacked as tarball distribution together with a test script.
+
+0.01  2002-04-09
+	- original release (as Finance::YahooJapan::HistricalQuotes).
+
+0.00  2001-05-30
+	- proto type (as Yahoo! Cropper).
+	- I've created this for my personal use.
