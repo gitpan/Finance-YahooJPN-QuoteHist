@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.04_01'; # 2003-08-15 (since 2001-05-30)
+our $VERSION = '0.04_02'; # 2003-08-15 (since 2001-05-30)
 
 use LWP::Simple;
 
@@ -137,6 +137,10 @@ sub fetch {
 		my $url = "http://chart.yahoo.co.jp/t?a=$month_a&b=$day_a&c=$year_a&d=$month_z&e=$day_z&f=$year_z&g=d&s=$$self{'symbol'}&y=$y";
 		my $remotedoc = get($url);
 		
+		# testing it is valid term or not.
+		if ($remotedoc =~ m/この期間の価格はありません。/) {
+			last;
+		}
 		# testing whether it is the final page (with bulk rows) or not
 		if ($remotedoc =~ m/\n<tr bgcolor="#dcdcdc"><th>日付<\/th><th>始値<\/th><th>高値<\/th><th>安値<\/th><th>終値<\/th><th>出来高<\/th><th>調整後終値\*<\/th><\/tr>\n<\/table>\n/) {
 			last;

@@ -1,5 +1,8 @@
 Revision history for Perl extension Finance::YahooJPN::QuoteHist.
 
+0.04_02  2003-08-16 00:10:12
+	- out-of-date bug has been fixed (I think).
+
 0.04  2003-08-15 08:17:54
 	- output() returns a list (previous version returns a string).
 
