@@ -1,8 +1,8 @@
-Finance::YahooJPN::QuoteHist version 0.05
+Finance::YahooJPN::QuoteHist version 0.06
 =========================================
 
- This module provides you functions to fetch historical quotes
- of Japanese stock markets from Yahoo-Japan-Finance.
+ This module provides you functions to fetch historical quote
+ of Japanese stock market from Yahoo-Japan-Finance.
 
 INSTALLATION
 

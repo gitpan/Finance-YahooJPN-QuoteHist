@@ -5,33 +5,33 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.05'; # 2003-08-20 (since 2001-05-30)
+our $VERSION = '0.06'; # 2003-09-29 (since 2001-05-30)
 
 use LWP::Simple;
 
 =head1 NAME
 
-Finance::YahooJPN::QuoteHist - fetch historical quotes of Japanese stock markets
+Finance::YahooJPN::QuoteHist - fetch a historical quote of Japanese stock market
 
 =head1 SYNOPSIS
 
   use Finance::YahooJPN::QuoteHist;
   
-  # get the quotes of Sony Corp. at Tokyo market.
-  my @quotes = Finance::YahooJPN::QuoteHist->quotes('6758.t');
+  # get the quote of Sony Corp. at Tokyo market.
+  my @quote = Finance::YahooJPN::QuoteHist->quote('6758.t');
   
-  my $quotes = join "\n", @quotes;
-  print $quotes;
+  my $quote = join "\n", @quote;
+  print $quote;
 
 =head1 DESCRIPTION
 
-Historical quotes data is basis for analyzing stock market. In Japan, standard quotes data is indicated as a set of data: four prices (open, high, low, close) and volume of each day. This module provides user a list of historical quotes of a company.
+Historical quote data is basis for analyzing stock market. In Japan, standard quote data is indicated as a set of data: four prices (open, high, low, close) and volume of each day. This module provides user a list of historical quote of a company.
 
 =head1 METHODS
 
 =over
 
-=item quotes($symbol [, 'start' => $start] [, 'noadjust' => 1])
+=item quote($symbol [, 'start' => $start] [, 'noadjust' => 1])
 
 This class method automatically C<new()>, C<fetch()> and C<extract()> then C<output()>.
 
@@ -39,7 +39,7 @@ See the descriptions about the following methods for the attributes: C<$symbol>,
 
 =cut
 
-sub quotes {
+sub quote {
 	my($class, $symbol, %option) = @_;
 	
 	my $self = $class->new($symbol);
@@ -70,9 +70,19 @@ sub quotes {
 
 =item new($symbol)
 
-Constructor class method. A stock C<$symbol> should be given with four numbers followed by market extension (dot `.' and one alphabet). (ex. `6758.t' )
+Constructor class method. A stock C<$symbol> should be given with 4-digit code number followed by letter extension (dot `.' and an alphabet). (ex. `6758.t' )
 
-For more information about market extensions, see L<http://help.yahoo.co.jp/help/jp/fin/quote/stock/quote_02.html>.
+Japanese stock markets use 4-digit code number as stock symbol. Plus, add a alphabetical letter extention to indicate the exchange market. For example, the stock symbol code of Sony Corp. is '6758' and the letter extention of the Tokyo Stock Exchange is '.t'. Hence, the stock quote of the Sony Corp. at Tokyo Stock Exchange is specified as '6758.t'.
+
+According to the Yahoo Japan Finance's description L<http://help.yahoo.co.jp/help/jp/fin/quote/stock/quote_02.html> the letter extentions of each exchange market are:
+
+ .t: Tokyo   Stock Exchange
+ .o: Osaka   Stock Exchange
+ .n: Nagoya  Stock Exchange
+ .s: Sapporo Stock Exchange
+ .f: Fukuoka Stock Exchange
+ .q: JASDAQ
+ .j: Nippon New Market (Hercules)
 
 =cut
 
@@ -95,11 +105,11 @@ sub new {
 
 =item fetch(['start' => $start])
 
-This object method fetches the stock's historical quotes pages of Yahoo-Japan-Finance from the C<$start> date to the current date.
+This object method fetches the stock's historical quote pages of Yahoo-Japan-Finance from the C<$start> date to the current date.
 
-A C<$start> date should be given in the format `YYYY-MM-DD' (ex. `2003-08-14'). Be careful, don't forget to quote the word, because bare word 2000-01-01 will be conprehend by Perl as '2000 - 1 - 1 = 1998'. This attributes is omittable. The default value of C<$start> is '1980-01-01'.
+A C<$start> date should be given in the format `YYYY-MM-DD' (ex. `2003-08-14'). Be careful, don't forget to quote the word, because bare word 2000-01-01 will be comprehend by Perl as '2000 - 1 - 1 = 1998'. This attribute is omittable. The default value of C<$start> is '1980-01-01'.
 
-You cannot specify the end date. Because, to find the splits you must scan all of the quotes from the start date. Without the splits data, estimattion of adjustment for the splits cannot do exactly.
+You cannot specify the last date. Because, to find the splits you must scan all of the quote from the start date. Without the splits data, estimation of adjustment for the splits cannot do exactly.
 
 =cut
 
@@ -156,7 +166,7 @@ sub fetch {
 
 =item extract(['noadjust' => 1])
 
-This object method extracts the stock's historical quotes data from the fetched pages of Yahoo-Japan-Finance.
+This object method extracts the stock's historical quote data from the fetched pages of Yahoo-Japan-Finance.
 
 The C<noadjust> option can turn on/off the function of value adjustment for the splits. If you omit this option or set this value '0', adjustment function is effective (default). If you set this value other than '0', adjustment function is ineffective.
 
@@ -169,7 +179,7 @@ sub extract {
 		
 		my @page = split /\n/, ${ $$self{'fetched'} }[$i]; # split the page to lines
 		
-		# remove lines before & after the quotes data rows.
+		# remove lines before & after the quote data rows.
 		my($cut_from_here, $cut_by_here);
 		for (my $j = 0; $j <= $#page; $j++) {
 			if ($page[$j] =~ m/^<tr bgcolor="#dcdcdc"><th>日付<\/th><th>始値<\/th><th>高値<\/th><th>安値<\/th><th>終値<\/th><th>出来高<\/th><th>調整後終値\*<\/th><\/tr>$/) {
@@ -186,7 +196,7 @@ sub extract {
 			}
 		}
 		
-		# restruct a new list with the quotes data rows
+		# restruct a new list with the quote data rows
 		my @table;
 		for (my $j = $cut_from_here; $j <= $cut_by_here; $j++) {
 			push @table, $page[$j];
@@ -205,7 +215,7 @@ sub extract {
 				$row =~ s/<\/td><\/tr><tr$//;
 				$extra = $row;
 			}
-			# this case is normal: quotes data rows
+			# this case is normal: quote data rows
 			else {
 				# split the line with </td><td>
 				($date, $open, $high, $low, $close, $volume, $extra) = split /<\/td><td>/, $row;
@@ -219,8 +229,8 @@ sub extract {
 					$number =~ s/,//g;
 				}
 				$row = join "\t", ($date, $open, $high, $low, $close, $volume);
-				# store the quotes data in the style just we've wanted ever!
-				push @{ $$self{'quotes'} }, $row;
+				# store the quote data in the style just we've wanted ever!
+				push @{ $$self{'quote'} }, $row;
 			}
 			
 			# here it is, another splits infomations...
@@ -266,20 +276,20 @@ sub _adjustment {
 	my $j = 0;
 	for (my $k = 0; $k <= $#{ $$self{'splits'} }; $k++) {
 		my ($split_date, $split_pre, $split_post) = split /\t/, ${ $$self{'splits'} }[$k];
-		for (my $i = $j; $i <= $#{ $$self{'quotes'} }; $i++) {
-			my($date, undef, undef, undef, undef, undef) = split /\t/, ${ $$self{'quotes'} }[$i];
+		for (my $i = $j; $i <= $#{ $$self{'quote'} }; $i++) {
+			my($date, undef, undef, undef, undef, undef) = split /\t/, ${ $$self{'quote'} }[$i];
 			if ($date eq $split_date) {
 				$j = $i + 1;
 				last;
 			}
 		}
-		for (my $i = $j; $i <= $#{ $$self{'quotes'} }; $i++) {
-			my($date, $open, $high, $low, $close, $volume) = split /\t/, ${ $$self{'quotes'} }[$i];
+		for (my $i = $j; $i <= $#{ $$self{'quote'} }; $i++) {
+			my($date, $open, $high, $low, $close, $volume) = split /\t/, ${ $$self{'quote'} }[$i];
 			foreach my $price ($open, $high, $low, $close) {
 				$price = int($price * $split_pre / $split_post + 0.5);
 			}
 			$volume = int($volume * $split_post / $split_pre + 0.5);
-			${ $$self{'quotes'} }[$i] = "$date\t$open\t$high\t$low\t$close\t$volume";
+			${ $$self{'quote'} }[$i] = "$date\t$open\t$high\t$low\t$close\t$volume";
 		}
 	}
 	
@@ -290,19 +300,19 @@ sub _reverse_order {
 	my $self = shift;
 	
 	my @reversed;
-	for (my $i = $#{ $$self{'quotes'} }; $i >= 0; $i--) {
-		push @reversed, ${ $$self{'quotes'} }[$i];
+	for (my $i = $#{ $$self{'quote'} }; $i >= 0; $i--) {
+		push @reversed, ${ $$self{'quote'} }[$i];
 	}
 	
-	@{ $$self{'quotes'} } = ();
-	@{ $$self{'quotes'} } = @reversed;
+	@{ $$self{'quote'} } = ();
+	@{ $$self{'quote'} } = @reversed;
 	
 	return 1;
 }
 
 =item output()
 
-This object method returns the extracted quotes as a list.
+This object method returns the extracted quote as a list.
 
 =back
 
@@ -310,7 +320,7 @@ This object method returns the extracted quotes as a list.
 
 sub output {
 	my $self = shift;
-	return @{ $$self{'quotes'} };
+	return @{ $$self{'quote'} };
 }
 
 1;

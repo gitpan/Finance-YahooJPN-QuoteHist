@@ -17,8 +17,8 @@ isa_ok($obj, 'Finance::YahooJPN::QuoteHist');
 
 $obj->fetch('start' => '1991-09-20');
 $obj->extract('noadjust' => 1);
-my @quotes = $obj->output();
-my $quotes = join "\n", @quotes[0..2932];
+my @quote = $obj->output();
+my $quote = join "\n", @quote[0..2932];
 
 my $expected = '1991-09-20	5730	5770	5700	5720	683000
 1991-09-24	5730	5830	5720	5830	782700
@@ -2954,14 +2954,14 @@ my $expected = '1991-09-20	5730	5770	5700	5720	683000
 2003-08-13	3620	3650	3590	3630	2570100
 2003-08-14	3650	3720	3640	3720	2447400';
 
-is( $quotes, $expected,
-	'fetch() and extract() quotes (without adjustment for the splits)' );
+is( $quote, $expected,
+	'fetch() and extract() quote (without adjustment for the splits)' );
 
 my $obj2 = Finance::YahooJPN::QuoteHist->new('6758.t');
 $obj2->fetch('start' => '1991-09-20');
 $obj2->extract();
-my @quotes2 = $obj2->output();
-my $quotes2 = join "\n", @quotes2[0..2932];
+my @quote2 = $obj2->output();
+my $quote2 = join "\n", @quote2[0..2932];
 
 $expected = '1991-09-20	2605	2623	2591	2600	1502600
 1991-09-24	2605	2650	2600	2650	1721940
@@ -5897,10 +5897,10 @@ $expected = '1991-09-20	2605	2623	2591	2600	1502600
 2003-08-13	3620	3650	3590	3630	2570100
 2003-08-14	3650	3720	3640	3720	2447400';
 
-is( $quotes2, $expected,
-	'fetch() and extract() quotes (with adjustment for the splits)' );
+is( $quote2, $expected,
+	'fetch() and extract() quote (with adjustment for the splits)' );
 
-my @quotes3 = Finance::YahooJPN::QuoteHist->quotes('6758.t', 'Start' => '1991-09-20');
-my $quotes3 = join "\n", @quotes3[0..2932];
-is( $quotes3, $expected,
-	'quotes() method (automatically new(), fetch(), extract() and output())' );
+my @quote3 = Finance::YahooJPN::QuoteHist->quote('6758.t', 'Start' => '1991-09-20');
+my $quote3 = join "\n", @quote3[0..2932];
+is( $quote3, $expected,
+	'quote() method (automatically new(), fetch(), extract() and output())' );

@@ -8,7 +8,7 @@ WriteMakefile(
 		'LWP::Simple' => '1.36',
 	},
 	($] >= 5.005 ? (
-		'ABSTRACT' => 'fetch historical quotes of Japanese stock markets',
+		'ABSTRACT' => 'fetch historical quote of Japanese stock market',
 		'AUTHOR'   => 'Masanori HATA <lovewing@geocities.co.jp>',
 	) : ()),
 );
