@@ -1,4 +1,4 @@
-Finance::YahooJPN::QuoteHist version 0.04
+Finance::YahooJPN::QuoteHist version 0.05
 =========================================
 
  This module provides you functions to fetch historical quotes
@@ -15,6 +15,8 @@ INSTALLATION
 
  This module and the test script requires internet connection.
  And the test script will take several minutes to progress.
+ And sometime the test may fail if the network connection is
+ unstable.
 
 DEPENDENCIES
 

@@ -2955,7 +2955,7 @@ my $expected = '1991-09-20	5730	5770	5700	5720	683000
 2003-08-14	3650	3720	3640	3720	2447400';
 
 is( $quotes, $expected,
-	'fetch() and extract() quotes (with no adjustment for the splits)' );
+	'fetch() and extract() quotes (without adjustment for the splits)' );
 
 my $obj2 = Finance::YahooJPN::QuoteHist->new('6758.t');
 $obj2->fetch('start' => '1991-09-20');

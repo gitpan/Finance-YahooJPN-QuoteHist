@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.04_02'; # 2003-08-15 (since 2001-05-30)
+our $VERSION = '0.05'; # 2003-08-20 (since 2001-05-30)
 
 use LWP::Simple;
 
@@ -33,7 +33,7 @@ Historical quotes data is basis for analyzing stock market. In Japan, standard q
 
 =item quotes($symbol [, 'start' => $start] [, 'noadjust' => 1])
 
-This object-class method automatically C<new()>, C<fetch()>, C<extract()> and C<output()>.
+This class method automatically C<new()>, C<fetch()> and C<extract()> then C<output()>.
 
 See the descriptions about the following methods for the attributes: C<$symbol>, C<start> and C<noadjust>.
 
