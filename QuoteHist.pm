@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.03'; # 2003-08-15 (since 2001-05-30)
+our $VERSION = '0.04'; # 2003-08-15 (since 2001-05-30)
 
 use LWP::Simple;
 
@@ -17,9 +17,10 @@ Finance::YahooJPN::QuoteHist - fetch historical quotes of Japanese stock markets
 
   use Finance::YahooJPN::QuoteHist;
   
-  # fetch the quotes of Sony Corp. at Tokyo market.
-  my $quotes = Finance::YahooJPN::QuoteHist->quotes('6758.t');
+  # get the quotes of Sony Corp. at Tokyo market.
+  my @quotes = Finance::YahooJPN::QuoteHist->quotes('6758.t');
   
+  my $quotes = join "\n", @quotes;
   print $quotes;
 
 =head1 DESCRIPTION
@@ -64,7 +65,7 @@ sub quotes {
 	else {
 		$self->extract();
 	}
-	return $self->output();
+	$self->output();
 }
 
 =item new($symbol)
@@ -94,9 +95,9 @@ sub new {
 
 =item fetch(['start' => $start])
 
-This object method fetches the stock's historical quotes pages of Yahoo-Japan-Finance from the C<$start> date to the C<$end> date.
+This object method fetches the stock's historical quotes pages of Yahoo-Japan-Finance from the C<$start> date to the current date.
 
-A C<$start> date should be given in the format `YYYY-MM-DD'. (ex. `2003-08-14') Be careful, don't forget to quote the word, because bare word 2000-01-01 will be conprehend by Perl as '2000 - 1 - 1 = 1998'. This attributes is omittable. The default value of C<$start> is '1980-01-01' and the default value of C<$end> is current date.
+A C<$start> date should be given in the format `YYYY-MM-DD' (ex. `2003-08-14'). Be careful, don't forget to quote the word, because bare word 2000-01-01 will be conprehend by Perl as '2000 - 1 - 1 = 1998'. This attributes is omittable. The default value of C<$start> is '1980-01-01'.
 
 You cannot specify the end date. Because, to find the splits you must scan all of the quotes from the start date. Without the splits data, estimattion of adjustment for the splits cannot do exactly.
 
@@ -297,7 +298,7 @@ sub _reverse_order {
 
 =item output()
 
-This object method returns the extracted quotes as a string data.
+This object method returns the extracted quotes as a list.
 
 =back
 
@@ -305,8 +306,7 @@ This object method returns the extracted quotes as a string data.
 
 sub output {
 	my $self = shift;
-	my $output = join "\n", @{ $$self{'quotes'} };
-	return $output;
+	return @{ $$self{'quotes'} };
 }
 
 1;
@@ -314,9 +314,9 @@ __END__
 
 =head1 NOTES
 
-The mudule calculates adjusted values originally including closing price. The only adjusted value which Yahoo presents is closing price, and its numbers are not rounded but cut for decimal fractions. For this reason, I decided to ignore Yahoo's adjusted values (that's why some adjusted closing prices are different from Yahoo's).
+The mudule calculates adjusted values originally including closing price. The only adjusted values which Yahoo presents are closing prices, and those numbers are not rounded but cut for decimal fractions. For this reason, I decided to ignore Yahoo's adjusted values (that's why some adjusted closing prices are different from Yahoo's).
 
-For non-Japanese users: this program includes some Japanese multi-byte character codes called `EUC-JP' for analyzing Yahoo! Japan's HTML data.
+For non-Japanese users: this program includes some Japanese multi-byte character codes called `EUC-JP' for analyzing Yahoo-Japan-Finance's HTML pages.
 
 =head1 AUTHOR
 
