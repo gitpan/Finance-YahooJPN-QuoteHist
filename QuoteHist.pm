@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.04'; # 2003-08-15 (since 2001-05-30)
+our $VERSION = '0.04_01'; # 2003-08-15 (since 2001-05-30)
 
 use LWP::Simple;
 

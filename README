@@ -1,4 +1,4 @@
-Finance::YahooJPN::QuoteHist version 0.03
+Finance::YahooJPN::QuoteHist version 0.04
 =========================================
 
  This module provides you functions to fetch historical quotes
