@@ -1,5 +1,9 @@
 Revision history for Perl extension Finance::YahooJPN::QuoteHist.
 
+0.07  2003-09-30 02:58:05 JST
+	- good-bye EUC-JP (and hello to Unicode/UTF-8) char-set.
+	- smarter test script.
+
 0.06  2003-09-29 23:45:35 JST
 	- change method name: quotes() -> quote()
 	- more improved POD.

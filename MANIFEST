@@ -3,4 +3,4 @@ QuoteHist.pm	fetch histrical stock quote data of Japanese market
 Makefile.PL		writes the Makefile
 MANIFEST		(this file)
 README			for the short descriptions about install
-t/1.t			test script for the Finance::YahooJPN::QuoteHist
+t/QuoteHist.t	test script for the Finance::YahooJPN::QuoteHist

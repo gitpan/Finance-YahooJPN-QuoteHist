@@ -3,11 +3,13 @@ package Finance::YahooJPN::QuoteHist;
 use 5.008;
 use strict;
 use warnings;
+use utf8;
+
+our $VERSION = '0.07'; # 2003-09-30 (since 2001-05-30)
+
 use Carp;
-
-our $VERSION = '0.06'; # 2003-09-29 (since 2001-05-30)
-
 use LWP::Simple;
+use Encode;
 
 =head1 NAME
 
@@ -140,26 +142,23 @@ sub fetch {
 	my($year_z, $month_z, $day_z) = split(/-/, $$self{'end'  });
 	
 	# multi page fetching
-#	print 'fetching: ' if $$self{'silent'} != 1;
 	my @remotedocs;
 	for (my $page = 0; ; $page++) {
 		my $y = $page * 50; # 50rows/1page is max at Yahoo-Japan-Finance
 		my $url = "http://chart.yahoo.co.jp/t?a=$month_a&b=$day_a&c=$year_a&d=$month_z&e=$day_z&f=$year_z&g=d&s=$$self{'symbol'}&y=$y";
-		my $remotedoc = get($url);
+		my $remotedoc = decode('euc-jp', get($url));
 		
 		# testing it is valid term or not.
-		if ($remotedoc =~ m/¤³¤Î´ü´Ö¤Î²Á³Ê¤Ï¤¢¤ê¤Ş¤»¤ó¡£/) {
+		if ($remotedoc =~ m/ã“ã®æœŸé–“ã®ä¾¡æ ¼ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚/) {
 			last;
 		}
 		# testing whether it is the final page (with bulk rows) or not
-		if ($remotedoc =~ m/\n<tr bgcolor="#dcdcdc"><th>ÆüÉÕ<\/th><th>»ÏÃÍ<\/th><th>¹âÃÍ<\/th><th>°ÂÃÍ<\/th><th>½ªÃÍ<\/th><th>½ĞÍè¹â<\/th><th>Ä´À°¸å½ªÃÍ\*<\/th><\/tr>\n<\/table>\n/) {
+		if ($remotedoc =~ m/\n<tr bgcolor="#dcdcdc"><th>æ—¥ä»˜<\/th><th>å§‹å€¤<\/th><th>é«˜å€¤<\/th><th>å®‰å€¤<\/th><th>çµ‚å€¤<\/th><th>å‡ºæ¥é«˜<\/th><th>èª¿æ•´å¾Œçµ‚å€¤\*<\/th><\/tr>\n<\/table>\n/) {
 			last;
 		}
 		push (@remotedocs, $remotedoc); # store the passed pages
-#		print $page + 1, '->' if $$self{'silent'} != 1;
 	}
 	$$self{'fetched'} = \@remotedocs;
-#	print "finished.\n" if $$self{'silent'} != 1;
 	
 	return $self;
 }
@@ -182,7 +181,7 @@ sub extract {
 		# remove lines before & after the quote data rows.
 		my($cut_from_here, $cut_by_here);
 		for (my $j = 0; $j <= $#page; $j++) {
-			if ($page[$j] =~ m/^<tr bgcolor="#dcdcdc"><th>ÆüÉÕ<\/th><th>»ÏÃÍ<\/th><th>¹âÃÍ<\/th><th>°ÂÃÍ<\/th><th>½ªÃÍ<\/th><th>½ĞÍè¹â<\/th><th>Ä´À°¸å½ªÃÍ\*<\/th><\/tr>$/) {
+			if ($page[$j] =~ m/^<tr bgcolor="#dcdcdc"><th>æ—¥ä»˜<\/th><th>å§‹å€¤<\/th><th>é«˜å€¤<\/th><th>å®‰å€¤<\/th><th>çµ‚å€¤<\/th><th>å‡ºæ¥é«˜<\/th><th>èª¿æ•´å¾Œçµ‚å€¤\*<\/th><\/tr>$/) {
 				$cut_from_here = $j + 2;
 				unless ($page[$cut_from_here - 1] =~ m/^<tr$/) {
 					$cut_from_here--; # in the only case split row is the top row
@@ -222,7 +221,7 @@ sub extract {
 				$close =~ s/<b>//;
 				$close =~ s/<\/b>//;
 				# changing date & numeric formats
-				$date =~ s/(.*?)Ç¯(.*?)·î(.*?)Æü/$1-$2-$3/;
+				$date =~ s/(.*?)å¹´(.*?)æœˆ(.*?)æ—¥/$1-$2-$3/;
 				$date =~ s/(.*?-)(\d)(-.*)/${1}0$2$3/;
 				$date =~ s/(.*?-.*?-)(\d)$/${1}0$2/;
 				foreach my $number ($open, $high, $low, $close, $volume) {
@@ -240,7 +239,7 @@ sub extract {
 			$extra =~ s/^.*?<\/td><\/tr><tr//;
 			# find the splits!
 			unless ($extra eq '') {
-				$extra =~ s/><td align=right>(.*?)Ç¯(.*?)·î(.*?)Æü<\/td><td colspan=6 align=center>Ê¬³ä: (.*?)³ô -> (.*?)³ô.*/$1-$2-$3\t$4\t$5/;
+				$extra =~ s/><td align=right>(.*?)å¹´(.*?)æœˆ(.*?)æ—¥<\/td><td colspan=6 align=center>åˆ†å‰²: (.*?)æ ª -> (.*?)æ ª.*/$1-$2-$3\t$4\t$5/;
 				$extra =~ s/(.*?-)(\d)(-.*)/${1}0$2$3/;
 				$extra =~ s/(.*?-.*?-)(\d)(\t.*)/${1}0$2$3/;
 				push @{ $$self{'splits'} }, $extra;
@@ -329,8 +328,6 @@ __END__
 =head1 NOTES
 
 The mudule calculates adjusted values originally including closing price. The only adjusted values which Yahoo presents are closing prices, and those numbers are not rounded but cut for decimal fractions. For this reason, I decided to ignore Yahoo's adjusted values (that's why some adjusted closing prices are different from Yahoo's).
-
-For non-Japanese users: this program includes some Japanese multi-byte character codes called `EUC-JP' for analyzing Yahoo-Japan-Finance's HTML pages.
 
 =head1 AUTHOR
 
