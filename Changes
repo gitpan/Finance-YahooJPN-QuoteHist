@@ -1,5 +1,9 @@
 Revision history for Perl extension Finance::YahooJPN::QuoteHist.
 
+0.03  2003-08-15 00:34:56
+	- the module rewrited and some methods were restructed.
+	- the test script was integrated.
+
 0.02  2003-08-12 22:43:34
 	- the module name has been changed and has been shortened.
 	- repacked as tarball distribution together with a test script.

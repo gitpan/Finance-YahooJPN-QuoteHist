@@ -1,7 +1,7 @@
-Finance::YahooJPN::QuoteHist version 0.02
+Finance::YahooJPN::QuoteHist version 0.03
 =========================================
 
- This module provides you functions to fetch histrical quotes
+ This module provides you functions to fetch historical quotes
  of Japanese stock markets from Yahoo-Japan-Finance.
 
 INSTALLATION
@@ -12,6 +12,9 @@ INSTALLATION
    make
    make test
    make install
+
+ This module and the test script requires internet connection.
+ And the test script will take several minutes to progress.
 
 DEPENDENCIES
 
